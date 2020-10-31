@@ -1,38 +1,122 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=11.8">
-<meta http-equiv="X-UA-Compatiable" content="ie=edge">
-<title>MakeCode Examples</title>
-<style>
-body {
-  background-color: white;
-  text-align: center;
-  color: black;
-}
-</style>
+    <title>Blocks Embedding Test Page</title>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+    <style>
+        html {font-family: Arial, Helvetica, sans-serif}
+        .boxdiv {padding:5px; display:inline-block; border: solid; background-color: lightgray}
+    </style>
 </head>
 <body>
 
-<h1>Code</h1>
-<p>Only shows the code blocks. Since you can’t zoom into the code, only use this when you have a few blocks. Default size is, Width=565 Height=400.</p>
+<h1>Blocks Embedding Test Page</h1>
 
-<iframe src="https://arcade.makecode.com/---codeembed#pub:_LAzEw2DvpVhs" allowtransparency="true" width="565" height="400" frameborder="0" sandbox="allow-popups allow-forms allow-scripts allow-same-origin"></iframe>
+<h2>Try embedding some blocks...</h2>
 
+<p>Render <b>basic.showString():</b></p>
 
-<h1>Editor</h1>
-<p>Shows the code blocks, lets students run the program, and edit the code. Default size is, Width=565 Height=400. </p>
+<div class="boxdiv">
+    <pre class="blocks"><code>
+basic.showString("Hello World")
+    </code></pre>
+</div>
 
-<iframe src="https://arcade.makecode.com/#pub:_LAzEw2DvpVhs" allowtransparency="true" width="565" height="400" frameborder="0" sandbox="allow-popups allow-forms allow-scripts allow-same-origin"></iframe>
+<p>Render the Fibonacci example:</b></p>
 
-<h1>Simulator</h1>
-<p>Will only show the arcade player and lets students run the program. If you use this object change the width dimensions to 400 and height to 500.</p>
+<div class="boxdiv">
+    <pre class="blocks"><code>
+let f1 = 0
+let f2 = 0
+let fibo = 0
+fibo = 1
+for (let i = 0; i < 10; i++) {
+    basic.showNumber(fibo)
+    basic.pause(1000)
+    f2 = f1
+    f1 = fibo
+    fibo = f1 + f2
+}
+    </code></pre>
+</div>
 
-<iframe src="https://arcade.makecode.com/---run?id=_LAzEw2DvpVhs" allowtransparency="true" width="400" height="500" frameborder="0" scrolling="no" allowfullscreen></iframe>
+<p>The Fibonacci example not rendered:</p>
 
-  <script src="https://makecode.com/gh-pages-embed.js"></script><script>makeCodeRender("{{ site.makecode.home_url }}", "{{ site.github.owner_name }}/{{ site.github.repository_name }}");</script>
+<div class="boxdiv">
+    <pre><code>
+let f1 = 0
+let f2 = 0
+let fibo = 0
+fibo = 1
+for (let i = 0; i < 10; i++) {
+    basic.showNumber(fibo)
+    basic.pause(1000)
+    f2 = f1
+    f1 = fibo
+    fibo = f1 + f2
+}
+    </code></pre>
+</div>
+
+<script>
+var makecodeUrl = "https://makecode.microbit.org/";
+var blocksClass = "blocks";
+
+var injectRenderer = function () {
+    var f = $("<iframe>", {
+        id: "makecoderenderer",
+        src: makecodeUrl + "--docs?render=1&lang=" + ($('html').attr('lang') || "en")
+    });
+    f.css("position", "absolute");
+    f.css("left", 0);
+    f.css("bottom", 0);
+    f.css("width", "1px");
+    f.css("height", "1px");
+    $('body').append(f);
+}
+
+function makeCodeRenderPre(pre) {
+    var f = document.getElementById("makecoderenderer");
+    f.contentWindow.postMessage({
+        type: "renderblocks",
+        id: pre.id,
+        code: pre.innerText
+    }, "https://makecode.microbit.org/");
+}
+
+var attachBlocksListener = function () {
+    var blockId = 0;
+    window.addEventListener("message", function (ev) {
+        var msg = ev.data;
+        if (msg.source != "makecode") return;
+
+        switch (msg.type) {
+            case "renderready":
+                $("." + blocksClass).each(function () {
+                    var snippet = $(this)[0];
+                    snippet.id = "pxt-blocks-" + (blockId++);
+                    makeCodeRenderPre(snippet);
+                });
+                break;
+            case "renderblocks":
+                var svg = msg.svg; // this is a string containing SVG
+                var id = msg.id;   // this is the id you sent
+                // replace text with svg
+                var img = document.createElement("img");
+                img.src = msg.uri;
+                img.width = msg.width;
+                img.height = msg.height;
+                var pre = document.getElementById(id)
+                pre.parentNode.insertBefore(img, pre)
+                pre.parentNode.removeChild(pre);
+                break;
+        }
+    }, false);
+}
+
+$(function () {
+    injectRenderer();
+    attachBlocksListener();
+});
+</script>
 </body>
 </html>
-
-

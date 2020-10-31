@@ -10,15 +10,27 @@ body {
   background-color: white;
   text-align: left;
   color: black;
+   <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+        html {font-family: Arial, Helvetica, sans-serif}
+        .boxdiv {padding:5px; display:inline-block; border: solid; background-color: white}
 }
 </style>
 </head>
 <body>
 
 <h1>Code</h1>
-<p>Only shows the code blocks. Since you can’t zoom into the code, only use this when you have a few blocks. Default size is, Width=565 Height=400.</p>
+<p>Only shows the code blocks. Since you can’t zoom into the code, only use this when you have a few blocks. When you click on the blocks it sends you to MakeCode. Default size is, Width=565 Height=400.</p>
 
 <iframe src="https://arcade.makecode.com/---codeembed#pub:_LAzEw2DvpVhs" allowtransparency="true" width="565" height="400" frameborder="0" sandbox="allow-popups allow-forms allow-scripts allow-same-origin"></iframe>
+  
+  <h1>Code Image 2</h1>
+<p>Unlike the other examples, this is not embedded into the page. This allows you to write the program in HTML and it renders the blocks on page.</p>
+ 
+  <div class="boxdiv">
+    <pre class="blocks"><code>
+basic.showString("Hello World")
+    </code></pre>
+</div>
 
 
 <h1>Editor</h1>
